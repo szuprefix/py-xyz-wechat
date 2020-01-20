@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from . import choices
 from django.contrib.auth.models import User as SiteUser
-from ..utils import modelutils
+from xyz_util import modelutils
 
 
 class Message(models.Model):
@@ -53,7 +53,7 @@ class User(models.Model):
         return self.nickname or self.openid
 
     def save(self, **kwargs):
-        from django_szuprefix.utils.datautils import filter_emoji
+        from xyz_util.datautils import filter_emoji
         if self.nickname:
             self.nickname = filter_emoji(self.nickname)
         if self.user is None:
