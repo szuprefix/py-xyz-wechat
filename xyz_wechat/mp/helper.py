@@ -1,7 +1,7 @@
 #!/usr/bin/env python   
 # -*- coding:utf-8 -*-   
 # Author:DenisHuang   
-from ..models import OrderPrepayId, User
+from ..models import User
 from ..apps import MP as settings
 from ..helper import BaseApi
 from . import signals
@@ -138,10 +138,10 @@ class MpApi(BaseApi):
 
     def _cache_prepayid(self, order_number, prepay_id):
         if prepay_id and order_number:
-            OrderPrepayId.objects.create(order_number=order_number, prepay_id=prepay_id)
+            pass # OrderPrepayId.objects.create(order_number=order_number, prepay_id=prepay_id)
 
     def get_order_prepayid(self, order_number):
-        p = OrderPrepayId.objects.filter(order_number=order_number).first()
+        p = None # OrderPrepayId.objects.filter(order_number=order_number).first()
         return p and p.prepay_id
 
     def order(self, openId, orderId, orderTitle, totalFee, ip, detail="", notifyUrl=PAID_NOTIFY_URL):
