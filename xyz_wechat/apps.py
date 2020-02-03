@@ -8,6 +8,7 @@ __author__ = 'denishuang'
 
 class Config(AppConfig):
     name = "xyz_wechat"
+    label = 'wechat'
     verbose_name = "微信"
 
     def ready(self):
