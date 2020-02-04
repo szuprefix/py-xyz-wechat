@@ -30,7 +30,7 @@ def user_passes_test(test_func):
                     return view_func(request, *args, **kwargs)
             if test_func(request.user):
                 return view_func(request, *args, **kwargs)
-            login_url = api.OAuthUrl(request.build_absolute_uri())
+            login_url = api.OAuthUrl(request.build_absolute_uri(request.META.get('TENANT_REQUEST_URI')))
             return HttpResponseRedirect(login_url)
 
         return _wrapped_view
