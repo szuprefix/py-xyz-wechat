@@ -36,7 +36,7 @@ class User(models.Model):
     city = models.CharField("城市", max_length=128, null=True, blank=True)
     province = models.CharField("省份", max_length=128, null=True, blank=True)
     country = models.CharField("国家", max_length=128, blank=True, default="中国")
-    gender = models.CharField("性别", max_length=2, null=True, blank=True, choices=choices.CHOICES_GENDER)
+    sex = models.CharField("性别", max_length=2, null=True, blank=True, choices=choices.CHOICES_GENDER)
     longitude = models.FloatField("经度", null=True, blank=True)
     latitude = models.FloatField("纬度", null=True, blank=True)
     subscribe = models.BooleanField("订阅", blank=True, default=True)
