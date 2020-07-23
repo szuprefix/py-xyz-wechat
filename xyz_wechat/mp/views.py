@@ -12,7 +12,7 @@ from . import helper, forms
 @csrf_exempt
 def ports(request):
     echostr = request.GET.get("echostr")
-    api = helper.api
+    api = helper.MpApi()
     flag = api.check_tencent_signature(request)
     if flag:
         um = api.deal_post(request.body)
@@ -25,7 +25,8 @@ def ports(request):
 
 @csrf_exempt
 def notice(request):
-    return HttpResponse(helper.api.pay_result_notify(request.body))
+    api = helper.MpApi()
+    return HttpResponse(api.pay_result_notify(request.body))
 
 
 class LoginView(RedirectView):
@@ -51,8 +52,9 @@ class LoginQRCodeView(View):
     def get(self, request):
         from django.shortcuts import reverse
         import uuid
+        api = helper.MpApi()
         task_id = unicode(uuid.uuid1())
         url = reverse("wechat:mp:qr-login", kwargs=dict(task_id=task_id))
         url = request.build_absolute_uri(url)
-        url = get_wx_oauth_url(helper.api.appid, url, state='.qrcode')
+        url = get_wx_oauth_url(api.appid, url, state='.qrcode')
         return JsonResponse({'url': url, 'task': {'id': task_id, 'status': 'RUNNING'}})

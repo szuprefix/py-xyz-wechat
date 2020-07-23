@@ -4,7 +4,7 @@ from functools import wraps
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponseRedirect
 from django.utils.decorators import available_attrs
-from .helper import api
+from . import helper
 from ..helper import STATE_PREFIX
 from django.contrib import auth
 
@@ -30,6 +30,7 @@ def user_passes_test(test_func):
                     return view_func(request, *args, **kwargs)
             if test_func(request.user):
                 return view_func(request, *args, **kwargs)
+            api = helper.MpApi()
             login_url = api.OAuthUrl(request.build_absolute_uri(request.META.get('TENANT_REQUEST_URI')))
             return HttpResponseRedirect(login_url)
 

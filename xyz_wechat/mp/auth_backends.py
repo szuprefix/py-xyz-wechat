@@ -13,13 +13,14 @@ class WeiXinBackend(ModelBackend):
     """
 
     def authenticate(self, code):
-        md = helper.api.login(code)
+        api = helper.MpApi()
+        md = api.login(code)
         if 'errcode' in md:
             if not md['errcode'] in [40029, 40163]:  # errmsg: invalid code , code been used
                 log.error("WeiXinBackend.authenticate error, data: %s" % md)
             return
         try:
-            user = helper.api.get_or_create_user(md).user
+            user = api.get_or_create_user(md).user
             setattr(user, 'login_type', 'wechat.mp')
             return user
         except Exception, e:

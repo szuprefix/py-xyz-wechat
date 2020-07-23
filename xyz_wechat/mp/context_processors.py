@@ -8,10 +8,12 @@ RequestContext.
 """
 from __future__ import unicode_literals
 from django_szuprefix.utils import httputils
-from .helper import api
+from . import helper
 
-def wxConfig(request): 
+
+def wxConfig(request):
     try:
-        return {'wxConfig': api.get_jsapi_params(httputils.get_url(request)) }
+        api = helper.MpApi()
+        return {'wxConfig': api.get_jsapi_params(httputils.get_url(request))}
     except:
         return {}

@@ -207,4 +207,4 @@ class MpApi(BaseApi):
         return "<xml>%s</xml>" % datautils.dict2xml(d)
 
 
-api = MpApi()
+# api = MpApi()
