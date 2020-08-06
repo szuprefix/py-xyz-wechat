@@ -7,13 +7,13 @@ These are referenced from the setting TEMPLATE_CONTEXT_PROCESSORS and used by
 RequestContext.
 """
 from __future__ import unicode_literals
-from django_szuprefix.utils import httputils
-from . import helper
-
-
-def wxConfig(request):
-    try:
-        api = helper.MpApi()
-        return {'wxConfig': api.get_jsapi_params(httputils.get_url(request))}
-    except:
-        return {}
+# from xyz_util import httputils
+# from . import helper
+#
+#
+# def wxConfig(request):
+#     try:
+#         api = helper.MpApi()
+#         return {'wxConfig': api.get_jsapi_params(httputils.get_url(request))}
+#     except:
+#         return {}

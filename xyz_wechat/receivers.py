@@ -19,8 +19,15 @@ def get_wechat_profile(sender, **kwargs):
 
 @receiver(to_get_party_settings)
 def get_wechat_settings(sender, **kwargs):
+    from django.shortcuts import reverse
+    lurl = reverse('wechat:mp:login')
+    request = kwargs.get('request')
+    t = request.META.get('TENANT_SUBDOMAIN')
+    if t:
+        lurl = "/%s%s" % (t, lurl)
+    lurl = "%s?next=REDIRECT_URL" % lurl
     return {
         'wechat': {
-            'oauthUrl': helper.get_wx_oauth_url(access(settings, 'WECHAT.MP.APPID'), '')
+            'oauthUrl': helper.get_wx_oauth_url(access(settings, 'WECHAT.MP.APPID'), request.build_absolute_uri(lurl)),
         }
     }

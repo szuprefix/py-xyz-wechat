@@ -7,7 +7,7 @@ from ..helper import BaseApi
 from . import signals
 import urllib, json, hashlib, time
 from django.shortcuts import resolve_url
-from django_szuprefix.utils import datautils
+from xyz_util import datautils
 import logging
 
 log = logging.getLogger('wechat')
