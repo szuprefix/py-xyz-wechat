@@ -32,7 +32,7 @@ def notice(request):
 
 def jsapi_config(request):
     api = helper.MpApi()
-    return JsonResponse(api.get_jsapi_params(request.META.get('referer')))
+    return JsonResponse(api.get_jsapi_params(request.META.get('HTTP_REFERER')))
 
 
 class LoginView(RedirectView):

@@ -70,6 +70,7 @@ class BaseApi(object):
         raise NotImplementedError()
 
     def get_jsapi_ticket(self):
+        self.update_token()
         url = self.get_jsapi_ticket_url()
         data = json.loads(urllib.urlopen(url).read())
         return data.get('ticket')
