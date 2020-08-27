@@ -79,7 +79,7 @@ class BaseApi(object):
         d = dict(
             noncestr=get_random_string(32),
             timestamp=int(time.time()),
-            jsapi_ticket=self.JSAPI_TICKET,
+            jsapi_ticket=self.ticket,
             url=url
         )
         d["signature"] = self.get_signature(d, hash=hashlib.sha1)

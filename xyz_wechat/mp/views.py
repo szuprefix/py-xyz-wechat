@@ -6,6 +6,7 @@ from django.views.generic import FormView, RedirectView, TemplateView, View
 from ..helper import get_wx_oauth_url
 
 __author__ = 'denishuang'
+
 from . import helper, forms
 
 
@@ -27,6 +28,11 @@ def ports(request):
 def notice(request):
     api = helper.MpApi()
     return HttpResponse(api.pay_result_notify(request.body))
+
+
+def jsapi_config(request):
+    api = helper.MpApi()
+    return JsonResponse(api.get_jsapi_params(request.META.get('referer')))
 
 
 class LoginView(RedirectView):
