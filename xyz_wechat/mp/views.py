@@ -2,7 +2,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, RedirectView, TemplateView, View
-
+from django.conf import settings
 from ..helper import get_wx_oauth_url
 
 __author__ = 'denishuang'
@@ -32,7 +32,11 @@ def notice(request):
 
 def jsapi_config(request):
     api = helper.MpApi()
-    return JsonResponse(api.get_jsapi_params(request.META.get('HTTP_REFERER')))
+    if settings.DEBUG:
+        d = {}
+    else:
+        d = api.get_jsapi_params(request.META.get('HTTP_REFERER'))
+    return JsonResponse(d)
 
 
 class LoginView(RedirectView):

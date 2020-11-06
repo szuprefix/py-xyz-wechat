@@ -58,6 +58,6 @@ class User(models.Model):
             self.nickname = filter_emoji(self.nickname)
         if self.user is None:
             from django.utils.crypto import get_random_string
-            user_name = "%s@wechat" % get_random_string(10)
+            user_name = "%s@wechat" % self.openid[-10:]
             self.user = SiteUser.objects.create_user(user_name, "", first_name=self.nickname)
         return super(User, self).save(**kwargs)
