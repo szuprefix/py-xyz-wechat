@@ -5,7 +5,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponseRedirect
 from django.utils.decorators import available_attrs
 from . import helper
-from ..helper import STATE_PREFIX
+from ..helper import get_weixin_login_context
 from django.contrib import auth
 
 
@@ -19,13 +19,12 @@ def user_passes_test(test_func):
     def decorator(view_func):
         @wraps(view_func, assigned=available_attrs(view_func))
         def _wrapped_view(request, *args, **kwargs):
-            state = request.GET.get("state")
-            if state and state.startswith(STATE_PREFIX):
-                state = state[len(STATE_PREFIX):]
+            context = get_weixin_login_context(request)
+            if context is not None:
                 code = request.GET.get("code")
-                user = auth.authenticate(code=code)
+                user = auth.authenticate(code=code, context=context)
                 if user and not isinstance(user, AnonymousUser):
-                    setattr(user, 'login_type', '%s%s' % (getattr(user, 'login_type', None), state))
+                    setattr(user, 'login_type', '%s%s' % (getattr(user, 'login_type', None), context.get('login_type')))
                     auth.login(request, user)
                     return view_func(request, *args, **kwargs)
             if test_func(request.user):

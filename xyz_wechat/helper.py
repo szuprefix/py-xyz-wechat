@@ -23,7 +23,7 @@ STATE_PREFIX = "WEIXIN_LOGIN"
 def clean_state_code(url):
     r = urlparse.urlparse(url)
     q = QueryDict(r.query, mutable=True)
-    if "state" in q and q["state"] == "WEIXIN_LOGIN":
+    if "state" in q and q["state"] == STATE_PREFIX:
         q.pop("state")
         q.pop("code")
     return urlparse.urlunparse([r[0], r[1], r[2], r[3], q.urlencode(), r[5]])
@@ -207,3 +207,14 @@ class BaseApi(object):
                     continue
                 return data
         raise ValueError("cgi_call: %s failed. %s" % (func, data))
+
+
+def get_weixin_login_context(request):
+    state = request.GET.get("state")
+    if state and state.startswith(STATE_PREFIX):
+        state = state[len(STATE_PREFIX):]
+        from django.core.cache import cache
+        context = cache.get(state)
+        if not context:
+            context = {'login_type': state}
+        return context

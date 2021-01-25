@@ -12,7 +12,7 @@ class WeiXinBackend(ModelBackend):
     For this to work, the User model must have an 'email' field
     """
 
-    def authenticate(self, code):
+    def authenticate(self, code, context=None):
         api = helper.MpApi()
         md = api.login(code)
         if 'errcode' in md:
@@ -20,6 +20,9 @@ class WeiXinBackend(ModelBackend):
                 log.error("WeiXinBackend.authenticate error, data: %s" % md)
             return
         try:
+            if context and 'user' in context:
+                from django.contrib.auth.models import User
+                md['user'] = User.objects.get(id=context.get('user'))
             user = api.get_or_create_user(md).user
             setattr(user, 'login_type', 'wechat.mp')
             return user
