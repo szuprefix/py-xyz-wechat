@@ -59,5 +59,5 @@ class User(models.Model):
         if self.user is None:
             from django.utils.crypto import get_random_string
             user_name = "%s@wechat" % self.openid[-10:]
-            self.user = SiteUser.objects.create_user(user_name, "", first_name=self.nickname)
+            self.user = SiteUser.objects.get_or_create(username=user_name, defaults=dict(email="", first_name=self.nickname))
         return super(User, self).save(**kwargs)

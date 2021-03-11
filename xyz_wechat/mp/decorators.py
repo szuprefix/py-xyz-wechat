@@ -2,7 +2,7 @@
 from functools import wraps
 
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.utils.decorators import available_attrs
 from . import helper
 from ..helper import get_weixin_login_context
@@ -27,6 +27,8 @@ def user_passes_test(test_func):
                     setattr(user, 'login_type', '%s%s' % (getattr(user, 'login_type', None), context.get('login_type')))
                     auth.login(request, user)
                     return view_func(request, *args, **kwargs)
+                else:
+                    return HttpResponseForbidden()
             if test_func(request.user):
                 return view_func(request, *args, **kwargs)
             api = helper.MpApi()
