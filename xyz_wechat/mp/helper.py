@@ -120,15 +120,17 @@ class MpApi(BaseApi):
         return self.cgi_call("media/get", extraParams="&media_id=%s" % mediaId, retrieve=True)
 
     def send_message(self, openId, content):
-        d = {
-            "touser": openId,
-            "msgtype": "text",
-            "text":
-                {
-                    "content": content
-                }
-        }
-
+        d = {"touser": openId}
+        if isinstance(content, (str, unicode)):
+            d.update({
+                "msgtype": "text",
+                "text":
+                    {
+                        "content": content
+                    }
+            })
+        else:
+            d.update(content)
         return self.cgi_call("message/custom/send", d)
 
     def merchant_call(self, func, data):

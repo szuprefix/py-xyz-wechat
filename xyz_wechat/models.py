@@ -39,8 +39,8 @@ class User(models.Model):
     sex = models.CharField("性别", max_length=2, null=True, blank=True, choices=choices.CHOICES_GENDER)
     longitude = models.FloatField("经度", null=True, blank=True)
     latitude = models.FloatField("纬度", null=True, blank=True)
-    subscribe = models.BooleanField("订阅", blank=True, default=True)
-    subscribe_time = models.DateTimeField("订阅时间", auto_now_add=True, db_index=True)
+    subscribe = models.BooleanField("订阅", blank=True, default=False)
+    subscribe_time = models.DateTimeField("订阅时间", blank=True, null=True, db_index=True)
     subscribe_scene = models.CharField("关注渠道", max_length=32, blank=True, default="ADD_SCENE_QR_CODE")
     qr_scene = models.PositiveIntegerField("扫码场景", blank=True, null=True)
     qr_scene_str = models.CharField("扫码场景描述", max_length=32, blank=True, default="")
@@ -48,6 +48,7 @@ class User(models.Model):
     tagid_list = modelutils.JSONField("标签ID列表", blank=True, default=[])
     groupid = models.PositiveIntegerField("分组ID", blank=True, default=0)
     language = models.CharField("语言", max_length=16, blank=True, default="zh_CN")
+    create_time = models.DateTimeField("创建时间", editable=False, auto_now_add=True, db_index=True)
 
     def __unicode__(self):
         return self.nickname or self.openid
