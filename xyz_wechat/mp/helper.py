@@ -54,12 +54,12 @@ class MpApi(BaseApi):
         data = self.cgi_call("template/api_add_template", d)
         return data.get("template_id")
 
-    def send_template_message(self, openid, templateid, context):
+    def send_template_message(self, openid, templateid, context, **kwargs):
         d = {"touser": openid,
              "template_id": templateid,
-             "url": "http://weixin.qq.com/download",
              "data": context
              }
+        d.update(kwargs)
         data = self.cgi_call("message/template/send", d)
         return data.get('msgid')
 
