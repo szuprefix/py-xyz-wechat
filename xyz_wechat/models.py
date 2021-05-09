@@ -27,7 +27,7 @@ class User(models.Model):
         verbose_name_plural = verbose_name = '用户'
         ordering = ('-subscribe_time',)
 
-    user = models.OneToOneField(SiteUser, verbose_name="网站用户", null=True,
+    user = models.OneToOneField(SiteUser, verbose_name="网站用户", null=True, on_delete=models.PROTECT,
                                 related_name="as_wechat_user")
     openid = models.CharField("openId", max_length=64, primary_key=True)
     unionid = models.CharField("unionId", max_length=64, null=True, blank=True)
@@ -60,5 +60,6 @@ class User(models.Model):
         if self.user is None:
             from django.utils.crypto import get_random_string
             user_name = "%s@wechat" % self.openid[-10:]
-            self.user, created = SiteUser.objects.get_or_create(username=user_name, defaults=dict(email="", first_name=self.nickname))
+            self.user, created = SiteUser.objects.get_or_create(username=user_name,
+                                                                defaults=dict(email="", first_name=self.nickname))
         return super(User, self).save(**kwargs)
