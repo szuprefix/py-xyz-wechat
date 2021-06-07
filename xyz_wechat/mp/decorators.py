@@ -3,7 +3,13 @@ from functools import wraps
 
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.utils.decorators import available_attrs
+try:
+    from django.utils.decorators import available_attrs
+except:
+    from functools import WRAPPER_ASSIGNMENTS
+    def available_attrs(fn):
+        return WRAPPER_ASSIGNMENTS
+
 from . import helper
 from ..helper import get_weixin_login_context
 from django.contrib import auth

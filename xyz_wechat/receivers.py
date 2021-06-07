@@ -27,7 +27,7 @@ def set_user_subscribe(sender, **kwargs):
     if not user:
         return
     if is_subscribe:
-        # print message, user, is_subscribe, user.subscribe_time
+        # print(message, user, is_subscribe, user.subscribe_time)
         if message.create_time>user.subscribe_time:
             user.subscribe_time = message.create_time
             user.subscribe = True

@@ -1,9 +1,12 @@
 #!/usr/bin/env python   
 # -*- coding:utf-8 -*-   
 # Author:DenisHuang   
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 import urllib, json, hashlib, time
-import urlparse
+try:
+    from urllib.parse import urlparse, urlunparse
+except:
+    from urlparse import urlparse, urlunparse
 from datetime import datetime
 from django.http import QueryDict
 from django.utils.http import urlquote
@@ -21,12 +24,12 @@ STATE_PREFIX = "WEIXIN_LOGIN"
 
 
 def clean_state_code(url):
-    r = urlparse.urlparse(url)
+    r = urlparse(url)
     q = QueryDict(r.query, mutable=True)
     if "state" in q and q["state"] == STATE_PREFIX:
         q.pop("state")
         q.pop("code")
-    return urlparse.urlunparse([r[0], r[1], r[2], r[3], q.urlencode(), r[5]])
+    return urlunparse([r[0], r[1], r[2], r[3], q.urlencode(), r[5]])
 
 
 def get_wx_oauth_url(appid, redirect_uri, scope="snsapi_userinfo", state=""):
@@ -178,7 +181,7 @@ class BaseApi(object):
         return res or ""
 
     def text_reply(self, message):
-        print message.content
+        print(message.content)
 
         # return info
 

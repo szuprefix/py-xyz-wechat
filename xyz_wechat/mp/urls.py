@@ -1,5 +1,5 @@
 from django.conf.urls import url
-import views
+from . import views
 from .decorators import weixin_login_required
 
 app_name = "mp"
