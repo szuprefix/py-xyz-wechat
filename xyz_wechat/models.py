@@ -18,7 +18,7 @@ class Message(models.Model):
     msg_id = models.BigIntegerField('编号', blank=True, null=True)
     content = models.TextField('内容', blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s:%s:%s" % (self.create_time, self.to_id, self.from_id)
 
 
@@ -50,7 +50,7 @@ class User(models.Model):
     language = models.CharField("语言", max_length=16, blank=True, default="zh_CN")
     create_time = models.DateTimeField("创建时间", editable=False, auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.nickname or self.openid
 
     def save(self, **kwargs):

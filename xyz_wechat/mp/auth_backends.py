@@ -26,6 +26,6 @@ class WeiXinBackend(ModelBackend):
             user = api.get_or_create_user(md).user
             setattr(user, 'login_type', 'wechat.mp')
             return user
-        except Exception, e:
+        except Exception as e:
             import traceback
             log.error("WeiXinBackend.authenticate error, data: %s; traceback: %s", md, traceback.format_exc())
