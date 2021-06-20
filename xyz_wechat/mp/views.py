@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, RedirectView, TemplateView, View
 from django.conf import settings
 from ..helper import get_wx_oauth_url
-
+from six import text_type
 __author__ = 'denishuang'
 
 from . import helper, forms
@@ -63,7 +63,7 @@ class LoginQRCodeView(View):
         from django.shortcuts import reverse
         import uuid
         api = helper.MpApi()
-        task_id = unicode(uuid.uuid1())
+        task_id = text_type(uuid.uuid1())
         url = reverse("wechat:mp:qr-login", kwargs=dict(task_id=task_id))
         url = request.build_absolute_uri(url)
         url = get_wx_oauth_url(api.appid, url, state='.qrcode')

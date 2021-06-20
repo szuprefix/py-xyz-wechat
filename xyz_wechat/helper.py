@@ -45,7 +45,7 @@ class BaseApi(object):
     cache_key_format = "WECHAT_%s_%s"
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         self.appid = None
