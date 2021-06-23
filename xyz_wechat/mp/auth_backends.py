@@ -12,7 +12,7 @@ class WeiXinBackend(ModelBackend):
     For this to work, the User model must have an 'email' field
     """
 
-    def authenticate(self, code, context=None):
+    def authenticate(self, request, code, context=None):
         api = helper.MpApi()
         md = api.login(code)
         if 'errcode' in md:
