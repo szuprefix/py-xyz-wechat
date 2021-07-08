@@ -52,7 +52,7 @@ def weixin_login_required(function=None):
     to the log-in page if necessary.
     """
     actual_decorator = user_passes_test(
-        lambda u: u.is_authenticated() and hasattr(u, 'as_wechat_user'),
+        lambda u: u.is_authenticated and hasattr(u, 'as_wechat_user'),
     )
     if function:
         return actual_decorator(function)

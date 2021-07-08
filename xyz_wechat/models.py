@@ -57,6 +57,8 @@ class User(models.Model):
         from xyz_util.datautils import filter_emoji
         if self.nickname:
             self.nickname = filter_emoji(self.nickname)
+        if self.subscribe_time is None:
+            self.subscribe_time = self.create_time
         if self.user is None:
             from django.utils.crypto import get_random_string
             user_name = "%s@wechat" % self.openid[-10:]
