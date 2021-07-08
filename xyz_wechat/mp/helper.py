@@ -5,7 +5,7 @@ from ..models import User
 from ..apps import MP as settings
 from ..helper import BaseApi
 from . import signals
-import urllib, json, hashlib, time
+import requests, json, hashlib, time
 from django.shortcuts import resolve_url
 from xyz_util import datautils
 import logging
@@ -66,12 +66,12 @@ class MpApi(BaseApi):
     def login(self, code=None):
         url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code" % (
             APPID, APPSECRET, code)
-        data = json.loads(urllib.urlopen(url).read())
+        data = requests.get(url).json()
         if 'errcode' in data:
             return data
         url = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN" % (
             data['access_token'], data['openid'])
-        data2 = json.loads(urllib.urlopen(url).read())
+        data2 = requests.get(url).json()
         data.update(data2)
         return data
 
@@ -135,7 +135,7 @@ class MpApi(BaseApi):
 
     def merchant_call(self, func, data):
         url = "https://api.weixin.qq.com/merchant/%s?access_token=%s" % (func, self.token)
-        response = json.loads(urllib.urlopen(url, json.dumps(data, ensure_ascii=False)).read())
+        response = requests.post(url, json.dumps(data, ensure_ascii=False)).json()
         return response
 
     def _cache_prepayid(self, order_number, prepay_id):
@@ -165,7 +165,7 @@ class MpApi(BaseApi):
         s = datautils.dict2xml(d)
         s = u"<xml>%s<sign>%s</sign></xml>" % (s, self.get_signature(d, key=self.PAY_KEY))
         url = "https://api.mch.weixin.qq.com/pay/unifiedorder"
-        response = urllib.urlopen(url, s.encode("utf8")).read()
+        response = requests.post(url, s.encode("utf8")).content
         data = datautils.xml2dict(response)
         if data.get("return_code") != "SUCCESS":
             raise ValueError("wechat order failed:%s" % data)

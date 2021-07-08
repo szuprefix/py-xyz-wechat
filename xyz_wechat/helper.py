@@ -2,11 +2,14 @@
 # -*- coding:utf-8 -*-   
 # Author:DenisHuang   
 from __future__ import unicode_literals, print_function
-import urllib, json, hashlib, time
+import requests, json, hashlib, time
 try:
     from urllib.parse import urlparse, urlunparse
+    from urllib.request import urlretrieve
 except:
     from urlparse import urlparse, urlunparse
+    from urllib import urlretrieve
+
 from datetime import datetime
 from django.http import QueryDict
 from django.utils.http import urlquote
@@ -63,7 +66,7 @@ class BaseApi(object):
 
     def get_access_token(self):
         url = self.get_access_token_url()
-        data = json.loads(urllib.urlopen(url).read())
+        data = requests.get(url).json()
         token = data.get("access_token")
         if not token:
             raise IOError("get_access_token error:%s" % data)
@@ -75,7 +78,7 @@ class BaseApi(object):
     def get_jsapi_ticket(self):
         self.update_token()
         url = self.get_jsapi_ticket_url()
-        data = json.loads(urllib.urlopen(url).read())
+        data = requests.get(url).json()
         return data.get('ticket')
 
     def get_jsapi_params(self, url):
@@ -201,10 +204,10 @@ class BaseApi(object):
         for i in range(try_times):
             url = "%s%s?access_token=%s%s" % (self.cgi_url, func, self.token, extraParams)
             if retrieve:
-                return urllib.urlretrieve(url)
+                return urlretrieve(url)
             else:
-                data = json.loads(
-                    urllib.urlopen(url, data and json.dumps(data, ensure_ascii=False).encode("utf8")).read())
+                pd = data and json.dumps(data, ensure_ascii=False).encode("utf8")
+                data = requests.post(url, pd).json()
                 if data.get("errcode") in self.token_invalid_codes:
                     self.update_token(at_once=True)
                     continue
