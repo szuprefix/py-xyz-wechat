@@ -31,7 +31,7 @@ class User(models.Model):
                                 related_name="as_wechat_user")
     openid = models.CharField("openId", max_length=64, primary_key=True)
     unionid = models.CharField("unionId", max_length=64, null=True, blank=True)
-    nickname = models.CharField("昵称", max_length=64, null=True, blank=True)
+    nickname = models.CharField("昵称", max_length=128, null=True, blank=True)
     headimgurl = models.CharField("头像", max_length=255, null=True, blank=True)
     city = models.CharField("城市", max_length=128, null=True, blank=True)
     province = models.CharField("省份", max_length=128, null=True, blank=True)
@@ -60,8 +60,10 @@ class User(models.Model):
         if self.subscribe_time is None:
             self.subscribe_time = self.create_time
         if self.user is None:
-            from django.utils.crypto import get_random_string
             user_name = "%s@wechat" % self.openid[-10:]
+            ms = SiteUser._meta.get_field('first_name').max_length
+            from xyz_util.datautils import trim_by_length
+            name = trim_by_length(self.nickname, ms)
             self.user, created = SiteUser.objects.get_or_create(username=user_name,
-                                                                defaults=dict(email="", first_name=self.nickname))
+                                                                defaults=dict(email="", first_name=name))
         return super(User, self).save(**kwargs)
