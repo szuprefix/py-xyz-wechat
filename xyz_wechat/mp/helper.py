@@ -66,13 +66,14 @@ class MpApi(BaseApi):
     def login(self, code=None):
         url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code" % (
             APPID, APPSECRET, code)
-        data = requests.get(url).json()
+        data = self.requests_json(url)
         if 'errcode' in data:
             return data
         url = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN" % (
             data['access_token'], data['openid'])
-        data2 = requests.get(url).json()
+        data2 = self.requests_json(url)
         data.update(data2)
+        log.info('weixin mp  url:%s data: %s', url, data)
         return data
 
     def get_or_create_user(self, data):
@@ -135,8 +136,10 @@ class MpApi(BaseApi):
 
     def merchant_call(self, func, data):
         url = "https://api.weixin.qq.com/merchant/%s?access_token=%s" % (func, self.token)
-        response = requests.post(url, json.dumps(data, ensure_ascii=False)).json()
-        return response
+        r = requests.post(url, json.dumps(data, ensure_ascii=False))
+        r.encoding = 'utf8'
+        data = r.json()
+        return data
 
     def _cache_prepayid(self, order_number, prepay_id):
         if prepay_id and order_number:

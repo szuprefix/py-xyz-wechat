@@ -61,12 +61,17 @@ class BaseApi(object):
     def set_cache(self, key, data):
         return cache.set(self.cache_key_format % (self.appid, key), data)
 
+    def requests_json(self, url):
+        r = requests.get(url)
+        r.encoding = 'utf8'
+        return r.json()
+
     def get_access_token_url(self):
         raise NotImplementedError()
 
     def get_access_token(self):
         url = self.get_access_token_url()
-        data = requests.get(url).json()
+        data = self.requests_json(url)
         token = data.get("access_token")
         if not token:
             raise IOError("get_access_token error:%s" % data)
@@ -78,7 +83,7 @@ class BaseApi(object):
     def get_jsapi_ticket(self):
         self.update_token()
         url = self.get_jsapi_ticket_url()
-        data = requests.get(url).json()
+        data = self.requests_json(url)
         return data.get('ticket')
 
     def get_jsapi_params(self, url):
@@ -207,7 +212,9 @@ class BaseApi(object):
                 return urlretrieve(url)
             else:
                 pd = data and json.dumps(data, ensure_ascii=False).encode("utf8")
-                data = requests.post(url, pd).json()
+                r = requests.post(url, pd)
+                r.encoding = 'utf8'
+                data = r.json()
                 if data.get("errcode") in self.token_invalid_codes:
                     self.update_token(at_once=True)
                     continue
