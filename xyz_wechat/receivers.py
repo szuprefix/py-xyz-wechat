@@ -33,7 +33,7 @@ def set_user_subscribe(sender, **kwargs):
             user.subscribe = True
             user.save()
     elif is_unsubscribe:
-        if message.create_time>user.subscribe_time:
+        if user.subscribe_time and message.create_time>user.subscribe_time:
             user.subscribe = False
             user.save()
 
