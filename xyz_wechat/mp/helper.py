@@ -78,7 +78,7 @@ class MpApi(BaseApi):
 
     def get_or_create_user(self, data):
         openId = data.get("openid")
-        for s in ['access_token', 'expires_in', 'privilege', 'refresh_token', 'scope']:
+        for s in ['access_token', 'expires_in', 'privilege', 'refresh_token', 'scope', 'is_snapshotuser']:
             data.pop(s, None)
         user, created = User.objects.update_or_create(
             openid=openId,
