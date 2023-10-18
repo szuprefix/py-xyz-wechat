@@ -194,11 +194,12 @@ class BaseApi(object):
         # return info
 
     def event_reply(self, message):
-
-        content = json.loads(message.content)
-        event_value = content.get("EventKey")
-
+        event = json.loads(message.content)
+        return self.on_event(event, message)
         # return info
+
+    def on_event(self, event, context):
+        pass
 
     def OAuthUrl(self, redirect_uri):
         return get_wx_oauth_url(self.appid, redirect_uri)
