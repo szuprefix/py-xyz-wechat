@@ -93,7 +93,7 @@ class MpApi(BaseApi):
         s = [tok, timestamp, nonce]
         s.sort()
         sha1 = hashlib.sha1()
-        sha1.update("".join(s))
+        sha1.update("".join(s).encode())
         sign = sha1.hexdigest()
         if sign != signature:
             log.info("signature invalid: %s  %s" % (sign, signature))
