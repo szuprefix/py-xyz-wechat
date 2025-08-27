@@ -12,7 +12,6 @@ except:
 
 from datetime import datetime
 from django.http import QueryDict
-from django.utils.http import urlquote
 
 from xyz_util import datautils
 import logging
@@ -36,8 +35,9 @@ def clean_state_code(url):
 
 
 def get_wx_oauth_url(appid, redirect_uri, scope="snsapi_userinfo", state=""):
+    from urllib.parse import quote
     return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s%s#wechat_redirect" % (
-        appid, urlquote(clean_state_code(redirect_uri)), scope, STATE_PREFIX, state)
+        appid, quote(clean_state_code(redirect_uri)), scope, STATE_PREFIX, state)
 
 
 class BaseApi(object):

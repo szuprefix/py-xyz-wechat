@@ -1,6 +1,6 @@
-from django.conf.urls import url, include
+from django.urls import path, include
 from . import mp
 app_name = "wechat"
 urlpatterns = [
-    url(r'^mp/', include(mp.urls)),
+    path('mp/', include(mp.urls)),
 ]
