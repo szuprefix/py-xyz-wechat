@@ -152,7 +152,9 @@ class BaseApi(object):
         d = datautils.node2dict(root)
         crypt_msg = d.get('Encrypt')
         if crypt_msg:
-            self.crypt.decrypt(crypt_msg)
+            xml = self.crypt.decrypt(crypt_msg)
+            root = ElementTree.fromstring(xml)
+            d = datautils.node2dict(root)
         log.info(f'del_post: {d}')
         um = models.Message()
         um.from_id = d.pop('FromUserName', None)
