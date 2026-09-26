@@ -5,6 +5,7 @@ from django.views.generic import FormView, RedirectView, TemplateView, View
 from django.conf import settings
 from ..helper import get_wx_oauth_url, log
 from six import text_type
+import os
 __author__ = 'denishuang'
 
 from . import helper, forms
@@ -16,25 +17,12 @@ def ports(request):
     api = helper.MpApi()
     flag = api.check_tencent_signature(request)
     if flag:
-        log.info(f'ports: {request.body}')
-        um = api.deal_post(request.body)
+        bs = request.body
+        log.info(f'ports: {bs}')
+        um = api.deal_post(bs)
         if um:
             content = api.response_user(um)
-
-            log.info("response_user type:", type(content))
-            log.info("response_user repr:", repr(content))
-
-            for i, ch in enumerate(content):
-                code = ord(ch)
-                if 0xD800 <= code <= 0xDFFF:
-                    log.info(
-                        f"SURROGATE FOUND: position={i}, "
-                        f"char={repr(ch)}, codepoint=U+{code:04X}"
-                    )
-
             response = HttpResponse(content, "text/xml; charset=utf-8")
-            # response = HttpResponse(api.response_user(um), "text/xml; charset=utf-8")
-            # response._charset = "utf-8"
             return response
     return HttpResponse(echostr)
 

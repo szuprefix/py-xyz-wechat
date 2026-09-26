@@ -167,19 +167,17 @@ class BaseApi(object):
         return um
 
     def response_user(self, um):
-        s = """<xml>
-            <ToUserName><![CDATA[%s]]></ToUserName>
-            <FromUserName><![CDATA[%s]]></FromUserName>
-            <CreateTime>%d</CreateTime>
-            <MsgType><![CDATA[%s]]></MsgType>
-            <Content><![CDATA[%s]]></Content>
-            </xml>""" % (um.from_id,
-                         um.to_id,
-                         time.mktime(um.create_time.timetuple()),
-                         "text",
-                         self.auto_reply(um)  #
-                         )
-        log.info(s)
+        reply = self.auto_reply(um)
+
+        s = f"""<xml>
+                <ToUserName><![CDATA[{um.from_id}]]></ToUserName>
+                <FromUserName><![CDATA[{um.to_id}]]></FromUserName>
+                <CreateTime>{time.mktime(um.create_time.timetuple())}</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA[{reply}]]></Content>
+                </xml>"""
+
+        log.info(f"response_xml={s}")
         return s
 
     def get_auto_reply(self):

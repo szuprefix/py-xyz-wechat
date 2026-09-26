@@ -215,9 +215,8 @@ class MpApi(BaseApi):
         return "<xml>%s</xml>" % datautils.dict2xml(d)
 
     def on_event(self, event, message):
-        t = os.environ.get('WECHAT_REPLY_ON_SUBSCRIBE')
         if event['Event'] == 'subscribe':
-            return os.environ.get('WECHAT_REPLY_ON_SUBSCRIBE')
+            return os.getenv('WECHAT_REPLY_ON_SUBSCRIBE')
         if event['Event'] == 'unsubscribe':
             return os.environ.get('WECHAT_REPLY_ON_UNSUBSCRIBE')
 
