@@ -19,6 +19,7 @@ APPID = settings.get("APPID")
 APPSECRET = settings.get("APPSECRET")
 MENU = settings.get("MENU")
 TOKEN = settings.get("TOKEN")
+AES_KEY = settings.get("AES_KEY")
 PAY_KEY = settings.get("PAY_KEY")
 PAID_NOTIFY_URL = settings.get("PAID_NOTIFY_URL")
 MCH_ID = settings.get("MCH_ID")
@@ -28,8 +29,10 @@ class MpApi(BaseApi):
     cgi_url = "https://api.weixin.qq.com/cgi-bin/"
 
     def __init__(self, **kwargs):
-        super(MpApi, self).__init__(**kwargs)
         self.appid = APPID
+        self.sign_token = TOKEN
+        self.aes_key = AES_KEY
+        super(MpApi, self).__init__(**kwargs)
 
     def get_access_token_url(self):
         return "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s" % (

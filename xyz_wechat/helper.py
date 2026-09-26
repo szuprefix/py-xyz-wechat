@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-   
 # Author:DenisHuang   
 from __future__ import unicode_literals, print_function
-import requests, json, hashlib, time
+import requests, json, hashlib, time, os
 try:
     from urllib.parse import urlparse, urlunparse
     from urllib.request import urlretrieve
@@ -16,7 +16,7 @@ from django.http import QueryDict
 from xyz_util import datautils
 import logging
 from django.contrib.auth.models import User
-from . import models
+from . import models, crypt
 from django.utils.crypto import get_random_string
 from django.core.cache import cache
 
@@ -24,13 +24,12 @@ log = logging.getLogger('wechat')
 
 STATE_PREFIX = "WEIXIN_LOGIN"
 
-
 def clean_state_code(url):
     r = urlparse(url)
     q = QueryDict(r.query, mutable=True)
     if "state" in q and q["state"] == STATE_PREFIX:
-        q.pop("state")
-        q.pop("code")
+        q.pop("state", None)
+        q.pop("code", None)
     return urlunparse([r[0], r[1], r[2], r[3], q.urlencode(), r[5]])
 
 
@@ -46,14 +45,18 @@ class BaseApi(object):
     token_invalid_codes = (40001,)
     cgi_url = None
     cache_key_format = "WECHAT_%s_%s"
+    aes_key = None
+    sign_token = None
+    appid = None
+
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-        self.appid = None
         self.token = self.get_cache("token")
         self.ticket = self.get_cache("ticket")
+        self.crypt = crypt.WXBizMsgCrypt(self.sign_token, self.aes_key, self.appid)
 
     def get_cache(self, key):
         return cache.get(self.cache_key_format % (self.appid, key))
@@ -147,13 +150,16 @@ class BaseApi(object):
 
         root = ElementTree.fromstring(postData)
         d = datautils.node2dict(root)
-
+        crypt_msg = d.get('Encrypt')
+        if crypt_msg:
+            self.crypt.decrypt(crypt_msg)
+        log.info(f'del_post: {d}')
         um = models.Message()
-        um.from_id = d.pop('FromUserName')
-        um.to_id = d.pop('ToUserName')
-        um.create_time = datetime.fromtimestamp(int(d.pop('CreateTime')))
-        um.type = d.pop('MsgType')
-        um.msg_id = 'MsgId' in d and d.pop('MsgId') or None
+        um.from_id = d.pop('FromUserName', None)
+        um.to_id = d.pop('ToUserName', None)
+        um.create_time = datetime.fromtimestamp(int(d.pop('CreateTime', None)))
+        um.type = d.pop('MsgType', None)
+        um.msg_id = 'MsgId' in d and d.pop('MsgId', None) or None
         um.content = um.type == "text" and d.get("content") or json.dumps(d)
         um.save()
         return um
